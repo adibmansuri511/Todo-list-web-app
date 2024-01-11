@@ -1,97 +1,104 @@
-// Global Variable used to store the quotes  
-// fetched from the API 
-
-var data;
-let front = true;
-
-// Getting the front and back author boxes 
-const authors = document.querySelectorAll(".author");
-
-// Getting the front and back texts
-const texts = document.querySelectorAll(".text");
-
-// Getting the body 
-const body = document.getElementById("body");
-
-// Getting the buttons 
-const button = document.querySelectorAll(".new-quote");
-
-const blockFront = document.querySelector(".block__front");
-const blockBack = document.querySelector(".block__back");
-
-const authorFront = authors[0];
-const authorBack = authors[1];
-
-const textFront = texts[0];
-const textBack = texts[1];
-
-const buttonFront = button[0];
-const buttonBack = button[1];
+let form = document.getElementById("form");
+let title = document.getElementById("title");
+let dueDate = document.getElementById("dueDate");
+let description = document.getElementById("description");
+let tasks = document.getElementById("tasks");
+let add = document.getElementById("add");
+let errorMsg = document.getElementById("errorMsg");
 
 
-// An arrow function used to get a quote randomly 
-const displayQuote = () => {
+// After the click of submit btn we prevent the refresh of the page.
+form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    formValidation();
+});
 
-    // Generates a random number between 0 and the length of the dataset.
-
-    let index = Math.floor(Math.random() * data.length);
-
-
-    // Stores the quote present at the randomly generated index 
-    let quote = data[index].text;
-
-    // Stores the author of the respective quote 
-    let author = data[index].author;
-
-
-    // If no author is present assign the author anonymous  
-
-    if (!author) {
-        author = "Anonymous"
+// Here in formValidation function User can't be submit blank text input.
+let formValidation = () => {
+    if (title.value === "") { // Show failure msg
+        console.log("Failure");
+        errorMsg.innerHTML = "Task cannot be blank.";
     }
 
-
-    // Replacing the current quote and author with a new one 
-
-    if (front) {
-        // Changing the front if back-side is displayed 
-        textFront.innerHTML = quote;
-        authorFront.innerHTML = author;
+    else { // Show success msg
+        console.log("Success");
+        errorMsg.innerHTML = "";
+        acceptData();
+        // IIFE (Immediately Invoke Functional Expression)
+        add.setAttribute("data-bs-dismiss", "modal");
+        add.click();
+        (() => {
+            add.setAttribute("data-bs-dismiss", "");
+        })();
     }
-    else {
-        // Changing the back if front-side is displayed
-        textBack.innerHTML = quote;
-        authorBack.innerHTML = author;
-    }
+};
 
-    front = !front;
+// Creating an object to store the data.
+// let data = {};
 
-}
+// Creating an Array to store the data.
+let data = [];
 
-// Fetching the quotes from the type.fit API using promises 
 
-fetch("https://type.fit/api/quotes")
-    .then((response) => {
-        return response.json()
-    }) // Getting the raw JSON data
-    .then((data) => {
+// Create an acceptData function to store the user input value in the data object.(kays title, dueDate, description)
+let acceptData = () => {
 
-        // Storing the quotes internally upon  
-        // successful completion of request
-        this.data = data;
+    // data["title"] = title.value;
+    // data["dueDate"] = dueDate.value;
+    // data["description"] = description.value;
 
-        // Displaying the quote When the Webpage loads 
-        displayQuote();
+    data.push({
+        title: title.value,
+        dueDate: dueDate.value,
+        description: description.value,
     });
 
+    localStorage
 
-// Adding an onclick listener for the button 
-let newQuote = () => {
+    console.log(data);
+    // console.log(`Our data object is ${data}`);
+    createTasks();
+};
 
-    // Rotating the Quote Box 
-    blockBack.classList.toggle("rotateB");
-    blockFront.classList.toggle("rotateF");
 
-    // Displaying a new quote when the webpage loads 
-    displayQuote();
-}
+// Create the createTasks function in which we get data from the object(data) and shows in the UI part.
+let createTasks = () => {
+    tasks.innerHTML += `
+    <div>
+        <span class="fw-bold">${data.title}</span>
+        <span class="small text-secondary">${data.dueDate}</span>
+        <p>${data.description}</p>
+        <span class="options">
+            <i onclick="editTask(this)" class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#form"></i>
+            <i onclick="deleteTask(this)" class="fas fa-trash-alt"></i>
+        </span>
+    </div>`;
+    resetForm();
+};
+
+
+// Reset the all input field when the form will submitted.
+let resetForm = () => {
+    title.value = "";
+    dueDate.value = "";
+    description.value = "";
+};
+
+
+// Delete the selected todo element.
+let deleteTask = (e) => {
+    e.parentElement.parentElement.remove();
+};
+
+
+// Edit the selected todo element.
+let editTask = (e) => {
+
+    let selectedTask = e.parentElement.parentElement;
+
+    title.value = selectedTask.children[0].innerHTML;
+    dueDate.value = selectedTask.children[1].innerHTML;
+    description.value = selectedTask.children[2].innerHTML;
+
+    selectedTask.remove();
+};
