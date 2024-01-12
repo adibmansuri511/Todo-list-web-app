@@ -1,6 +1,6 @@
 body {
     font-family: sans-serif;
-    background-color: #e5e5e5;
+    background-image: radial-gradient(circle, #e5e8ee, #b0bee0, #7f94d0, #4f6bbe, #1143aa);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,10 +10,10 @@ body {
 .app {
     width: 300px;
     height: 500px;
-    border: 5px solid #abcea1;
+    border: 5px solid #050dc9;
     border-radius: 15px;
     padding: 15px;
-    background-color: #ffffff;
+    background-color: #8283ff6e;
     overflow-y: scroll;
 }
 
@@ -25,14 +25,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(171, 206, 161, 0.35);
+    background-color: #283aa7cc;
     padding: 8px 10px;
     border-radius: 8px;
     cursor: pointer;
 }
 
 .fa-plus {
-    background-color: #abcea1;
+    background-color: #050dc9;
     padding: 4px;
     border-radius: 5px;
 }
@@ -44,9 +44,9 @@ body {
 
 #tasks div {
     display: grid;
-    gap: 4px;
-    background-color: #e2eede;
-    border: 3px solid #abcea1;
+    gap: 6px;
+    background-color: #283aa7;
+    border: 3px solid #050dc9;
     border-radius: 8px;
     padding: 5px;
 }
@@ -55,6 +55,7 @@ body {
     justify-self: center;
     display: flex;
     gap: 20px;
+    padding-bottom: 5px;
 }
 
 .options i {

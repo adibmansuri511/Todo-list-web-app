@@ -53,7 +53,7 @@ let acceptData = () => {
         description: description.value,
     });
 
-    localStorage
+    localStorage.setItem("data", JSON.stringify(data));
 
     console.log(data);
     // console.log(`Our data object is ${data}`);
@@ -63,16 +63,25 @@ let acceptData = () => {
 
 // Create the createTasks function in which we get data from the object(data) and shows in the UI part.
 let createTasks = () => {
-    tasks.innerHTML += `
-    <div>
-        <span class="fw-bold">${data.title}</span>
-        <span class="small text-secondary">${data.dueDate}</span>
-        <p>${data.description}</p>
-        <span class="options">
-            <i onclick="editTask(this)" class="fas fa-edit" data-bs-toggle="modal" data-bs-target="#form"></i>
-            <i onclick="deleteTask(this)" class="fas fa-trash-alt"></i>
-        </span>
-    </div>`;
+
+    // This is because we add new todo item the same name multiple todo item will be created.
+    tasks.innerHTML = "";
+
+    // We add array .map method on data(array of an object)
+    data.map((value, idx) => {
+        return (tasks.innerHTML += `
+        <div id="${idx}">
+            <span class="fw-bold text-light">${value.title}</span>
+            <span class="small text-light text-light">${value.dueDate}</span>
+            <p class="text-light">${value.description}</p>
+            <span class="options">
+                <i onclick="editTask(this)" class="fas fa-edit text-light" data-bs-toggle="modal" data-bs-target="#form"></i>
+                <i onclick="deleteTask(this);createTasks()" class="fas fa-trash-alt text-light"></i>
+            </span>
+        </div>
+        `);
+    });
+
     resetForm();
 };
 
@@ -88,6 +97,14 @@ let resetForm = () => {
 // Delete the selected todo element.
 let deleteTask = (e) => {
     e.parentElement.parentElement.remove();
+
+    // delete the todo item from particular id
+    data.splice(e.parentElement.parentElement.id, 1)
+
+    // This is because after refresh the page localStorage should be updated and delete the selected(id) todo item permanently.
+    localStorage.setItem("data", JSON.stringify(data));
+
+    console.log(data);
 };
 
 
@@ -100,5 +117,13 @@ let editTask = (e) => {
     dueDate.value = selectedTask.children[1].innerHTML;
     description.value = selectedTask.children[2].innerHTML;
 
-    selectedTask.remove();
+    deleteTask(e);
 };
+
+
+// Create anonymous function to retrieve data from localStorage after the page refresh.
+(() => {
+    data = JSON.parse(localStorage.getItem("data")) || [];
+    createTasks();
+    console.log(data);
+})();
